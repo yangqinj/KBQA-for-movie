@@ -171,9 +171,7 @@ if __name__ == '__main__':
     # Store the detail in separate files where each line corresponds
     # for a single movie/actor/director in json format.
     with open(os.path.join(data_dir, file_name_top250_movies_link), "r") as file_link, \
-            open(os.path.join(data_dir, "movie.json"), "w") as file_movie, \
-            open(os.path.join(data_dir, "movie_to_celebrity.txt"), "w") as file_rel:
-
+            open(os.path.join(data_dir, "movie.json"), "w") as file_movie:
         celebrity_all = {}
         for x, link in enumerate(file_link):
             link = link.strip()
@@ -189,28 +187,17 @@ if __name__ == '__main__':
 
             if "directors" in movie_detail:
                 for d in movie_detail["directors"]:
-                    # add relation for movie and director
-                    file_rel.write("{} directedBy {}\n".format(movie_id, d))
                     celebrity_all[d] = 1
             if "actors" in movie_detail:
                 for a in movie_detail["actors"]:
-                    # add relation for movie and actor
-                    file_rel.write("{} starring {}\n".format(movie_id, a))
                     celebrity_all[a] = 1
 
             # store movie detail to file
             file_movie.write(json.dumps(movie_detail, ensure_ascii=False) + "\n")
 
-        # store celebrity
-        with open(os.path.join(data_dir, "celebrity_id.txt"), "w") as file:
-            file.write("\n".join(celebrity_all.keys()))
-
-    with open(os.path.join(data_dir, "celebrity_id.txt"), "r") as file:
-        celebrity_ids_all = [line.strip() for line in file.readlines() if line.strip()]
-
-    with open(os.path.join(data_dir, "celebrity.json"), "a+") as file_celebrity:
-        # craw detail of directors and actors
-        for x, c in enumerate(celebrity_ids_all):
+    with open(os.path.join(data_dir, "celebrity.json"), "w") as file_celebrity:
+        # crawl detail of directors and actors
+        for x, c in enumerate(celebrity_all.keys()):
             print("Crawling celebrity", x, c)
             celebrity_detail = get_celebrity_detail(c)
             if not celebrity_detail:
