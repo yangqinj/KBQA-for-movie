@@ -1,0 +1,127 @@
+@prefix map: <#> .
+@prefix db: <> .
+@prefix vocab: <vocab/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix d2rq: <http://www.wiwiss.fu-berlin.de/suhl/bizer/D2RQ/0.1#> .
+@prefix jdbc: <http://d2rq.org/terms/jdbc/> .
+@prefix : <http://www.kgmovie.com#> .
+
+map:database a d2rq:Database;
+	d2rq:jdbcDriver "com.mysql.jdbc.Driver";
+	d2rq:jdbcDSN "jdbc:mysql:///kg_movie?characterEncoding=utf8";
+	d2rq:username "root";
+	d2rq:password "root1234";
+	jdbc:autoReconnect "true";
+	jdbc:zeroDateTimeBehavior "convertToNull";
+	.
+
+# Table celebrity
+map:celebrity a d2rq:ClassMap;
+	d2rq:dataStorage map:database;
+	d2rq:uriPattern "celebrity/@@celebrity.celebrity_id@@";
+	d2rq:class :Celebrity;
+	d2rq:classDefinitionLabel "celebrity";
+	.
+map:celebrity_chinese_name a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:celebrity;
+	d2rq:property :celebrityChineseName;
+	d2rq:propertyDefinitionLabel "celebrity chinese_name";
+	d2rq:column "celebrity.chinese_name";
+	.
+map:celebrity_gender a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:celebrity;
+	d2rq:property :celebrityGender;
+	d2rq:propertyDefinitionLabel "celebrity gender";
+	d2rq:column "celebrity.gender";
+	.
+map:celebrity_birth_date a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:celebrity;
+	d2rq:property :celebrityBirthDate;
+	d2rq:propertyDefinitionLabel "celebrity birth_date";
+	d2rq:column "celebrity.birth_date";
+	d2rq:datatype xsd:date;
+	.
+map:celebrity_birth_place a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:celebrity;
+	d2rq:property :celebrityBirthPlace;
+	d2rq:propertyDefinitionLabel "celebrity birth_place";
+	d2rq:column "celebrity.birth_place";
+	.
+
+# Table genre
+map:genre a d2rq:ClassMap;
+	d2rq:dataStorage map:database;
+	d2rq:uriPattern "genre/@@genre.genre_id@@";
+	d2rq:class :Genre;
+	d2rq:classDefinitionLabel "genre";
+	.
+map:genre_genre_name a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:genre;
+	d2rq:property :genreName;
+	d2rq:propertyDefinitionLabel "genre genre_name";
+	d2rq:column "genre.genre_name";
+	.
+
+# Table movie
+map:movie a d2rq:ClassMap;
+	d2rq:dataStorage map:database;
+	d2rq:uriPattern "movie/@@movie.movie_id@@";
+	d2rq:class :Movie;
+	d2rq:classDefinitionLabel "movie";
+	.
+map:movie_title a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:movie;
+	d2rq:property :movieTitle;
+	d2rq:propertyDefinitionLabel "movie title";
+	d2rq:column "movie.title";
+	.
+map:movie_publish_year a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:movie;
+	d2rq:property :moviePublishYear;
+	d2rq:propertyDefinitionLabel "movie publish_year";
+	d2rq:column "movie.publish_year";
+	d2rq:datatype xsd:date;
+	.
+map:movie_country a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:movie;
+	d2rq:property :movieCountry;
+	d2rq:propertyDefinitionLabel "movie country";
+	d2rq:column "movie.country";
+	.
+map:movie_rate a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:movie;
+	d2rq:property :movieRate;
+	d2rq:propertyDefinitionLabel "movie rate";
+	d2rq:column "movie.rate";
+	d2rq:datatype xsd:float;
+	.
+
+# Table movie_to_actor (n:m)
+map:movie_to_actor__link a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:movie;
+	d2rq:property :starring;
+	d2rq:refersToClassMap map:celebrity;
+	d2rq:join "movie_to_actor.celebrity_id => celebrity.celebrity_id";
+	d2rq:join "movie_to_actor.movie_id => movie.movie_id";
+	.
+
+# Table movie_to_director (n:m)
+map:movie_to_director__link a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:movie;
+	d2rq:property :directedBy;
+	d2rq:refersToClassMap map:celebrity;
+	d2rq:join "movie_to_director.celebrity_id => celebrity.celebrity_id";
+	d2rq:join "movie_to_director.movie_id => movie.movie_id";
+	.
+
+# Table movie_to_genre (n:m)
+map:movie_to_genre__link a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:movie;
+	d2rq:property :isGenre;
+	d2rq:refersToClassMap map:genre;
+	d2rq:join "movie_to_genre.genre_id => genre.genre_id";
+	d2rq:join "movie_to_genre.movie_id => movie.movie_id";
+	.
+

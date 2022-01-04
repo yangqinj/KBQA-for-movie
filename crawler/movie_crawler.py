@@ -155,7 +155,7 @@ def get_celebrity_detail(celebrity_id):
     else:
         birth_date = soup.find("span", text="生卒日期")
         if birth_date:
-            detail["birth_date"] = birth_date.text.split("至")[0].strip()
+            detail["birth_date"] = birth_date.next_sibling[1:].strip().split("至")[0]
     # find birth place
     birth_place = soup.find("span", text="出生地")
     if birth_place:
@@ -194,6 +194,19 @@ if __name__ == '__main__':
 
             # store movie detail to file
             file_movie.write(json.dumps(movie_detail, ensure_ascii=False) + "\n")
+
+    # celebrity_all = {}
+    # with open(os.path.join(data_dir, "movie.json"), "r") as file_movie:
+    #     for line in file_movie:
+    #         movie = json.loads(line)
+    #         if not movie: continue
+    #
+    #         if "directors" in movie:
+    #             for d in movie["directors"]:
+    #                 celebrity_all[d] = 1
+    #         if "actors" in movie:
+    #             for a in movie["actors"]:
+    #                 celebrity_all[a] = 1
 
     with open(os.path.join(data_dir, "celebrity.json"), "w") as file_celebrity:
         # crawl detail of directors and actors
