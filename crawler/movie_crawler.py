@@ -29,7 +29,7 @@ cookies = {
 }
 
 
-data_dir = "../data/"
+data_dir = "../data/douban/"
 file_name_top250_movies_link = "top250_movies_urls.txt"
 
 

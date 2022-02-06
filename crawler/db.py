@@ -71,7 +71,7 @@ import json
 
 import pymysql
 
-data_dir = "../data"
+data_dir = "../data/douban"
 
 
 date_pattern = re.compile(r"(?P<year>[\d]{2,4})年((?P<month>0[1-9]|1[0-2])月)?((?P<day>0[1-9]|1\d|2\d|3[0-1])日)?")

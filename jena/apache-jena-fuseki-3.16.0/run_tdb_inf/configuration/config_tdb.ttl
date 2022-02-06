@@ -1,0 +1,75 @@
+# Licensed under the terms of http://www.apache.org/licenses/LICENSE-2.0
+
+## Fuseki Server configuration file.
+
+@prefix :        <#> .
+@prefix fuseki:  <http://jena.apache.org/fuseki#> .
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix ja:      <http://jena.hpl.hp.com/2005/11/Assembler#> .
+@prefix tdb:     <http://jena.hpl.hp.com/2008/tdb#> .
+
+
+:service rdf:type fuseki:Service ;
+   fuseki:name "kgmovie" ;
+   fuseki:endpoint [
+      fuseki:operation fuseki:query ;
+      fuseki:name "" ;
+   ];
+   fuseki:endpoint [
+      fuseki:operation fuseki:query ;
+      fuseki:name "query" ;
+   ];
+   fuseki:endpoint [
+      fuseki:operation fuseki:query ;
+      fuseki:name "sparql" ;
+   ];
+   fuseki:endpoint [
+         # SPARQL Graph Store Protocol (read)
+        fuseki:operation fuseki:gsp_r ;
+        fuseki:name ""
+    ] ;
+    fuseki:endpoint [
+         # SPARQL Graph Store Protocol (read)
+        fuseki:operation fuseki:gsp_r ;
+        fuseki:name "data"
+    ] ;
+    fuseki:endpoint [
+         # SPARQL Graph Store Protocol (read)
+        fuseki:operation fuseki:gsp_r ;
+        fuseki:name "get"
+    ] ;
+    fuseki:endpoint [
+        fuseki:operation fuseki:update ;
+        fuseki:name "update"
+    ] ;
+   fuseki:dataset :dataset ;
+   .
+
+:dataset rdf:type ja:RDFDataset;
+     ja:defaultGraph :inferenceModel
+     .
+
+:inferenceModel rdf:type ja:InfModel;
+
+     # 基础模型
+     # ja:baseModel :tdbGraph;
+     ja:MemoryModel :tdbGraph;
+
+     # 本体文件路径
+     ja:content [
+      ja:externalContent <file:///Users/yangqj/Documents/Workspace/KBQA-for-movie/jena/apache-jena-fuseki-3.16.0/run_tdb_inf/databases/kg_movie_ontology.ttl> ;
+     ];
+
+     # 规则推理机和规则文件路径
+     ja:reasoner [
+      ja:reasonerURL <http://jena.hpl.hp.com/2003/GenericRuleReasoner> ;
+      ja:rulesFrom <file:///Users/yangqj/Documents/Workspace/KBQA-for-movie/jena/apache-jena-fuseki-3.16.0/run_tdb_inf/databases/kg_movie_rules.ttl> ;
+     ];
+
+     .
+
+:tdbGraph rdf:type tdb:GraphTDB;
+     tdb:location "/Users/yangqj/Documents/Workspace/KBQA-for-movie/data/tdb" ;
+     .
+
