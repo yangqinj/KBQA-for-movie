@@ -8,7 +8,7 @@
 from SPARQLWrapper import SPARQLWrapper, JSON
 
 
-url_base = "http://localhost:3031/kgmovie/"
+url_base = "http://localhost:3030/kgmovie/"
 query_url = url_base + "sparql"
 update_url = url_base + "update"
 
