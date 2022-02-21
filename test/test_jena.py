@@ -26,8 +26,9 @@ def sparql_request(url, question, query_string, variable=None, is_update=False):
     if is_update:
         print(results.decode())
     else:
-        for result in results["results"]["bindings"]:
-            print(result[variable]["value"])
+        # for result in results["results"]["bindings"]:
+        #     print(result[variable]["value"])
+        print(results)
 
 
 def test_query_movie():
@@ -115,7 +116,24 @@ def test_celebrity_direct():
 
 
 if __name__ == '__main__':
-    test_query_movie()
-    test_add_movie()
-    test_query_comedian()
-    test_celebrity_direct()
+    # test_query_movie()
+    # test_add_movie()
+    # test_query_comedian()
+    # test_celebrity_direct()
+
+    query_string = """
+                PREFIX : <http://www.kgmovie.com#>
+                PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+                
+                SELECT COUNT(?title) WHERE {
+                    ?movie rdf:type :Movie .
+                    ?movie :starring ?person .
+                    ?person :celebrityChineseName "周星驰" .
+                    ?movie :movieTitle ?title .
+                }
+    """
+    sparql_request(query_url,
+                   "出演了多少部电影",
+                   query_string,
+                   "title")
+
