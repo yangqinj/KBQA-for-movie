@@ -8,11 +8,12 @@ from app.question_template import rules
 
 
 class Question2SPARQL(object):
-    def __init__(self):
-        self.tokenizer = Tokenizer()
+    def __init__(self, dict_paths):
+        self.tokenizer = Tokenizer(dict_paths)
 
     def translate(self, question):
         words = self.tokenizer.tokenize(question)
+        print("question {} is tokenized to {}".format(question, words))
 
         # TODO: 取第一个匹配的规则，后续修改更合适的逻辑
         sparql = None

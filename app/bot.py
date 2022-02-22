@@ -8,8 +8,8 @@ from app.sparql_server import SPARQLServer
 
 
 class QABot(object):
-    def __init__(self, sparql_endpoint):
-        self.q2s = Question2SPARQL()
+    def __init__(self, sparql_endpoint, dict_paths):
+        self.q2s = Question2SPARQL(dict_paths)
         self.sparql_server = SPARQLServer(sparql_endpoint)
 
     def answer(self, question):
@@ -36,8 +36,18 @@ class QABot(object):
 if __name__ == '__main__':
     from config import Config
 
-    bot = QABot(Config.fuseki_endpoint)
+    bot = QABot(Config.fuseki_endpoint,
+                Config.dict_paths)
 
-    questions = ["周星驰出演了什么电影？"]
+    questions = ["周星驰出演了什么电影",
+                 "初恋这件小事有哪些演员出演了",
+                 "刘德华和梁朝伟一起出演的电影有哪些",
+                 "周星驰既出演又导演的影片有哪些",
+                 "中国上映的电影有哪些",
+                 "泰勒·吉蕾出演了什么类型的电影",
+                 "刘德华出演了多少部影片"]
     for q in questions:
-        print(bot.answer(q))
+        print("*" * 20)
+        print("问题：", q)
+        ans = bot.answer(q)
+        print("答案：", ans)

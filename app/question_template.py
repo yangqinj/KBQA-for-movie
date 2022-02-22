@@ -174,7 +174,7 @@ class QuestionSet(object):
                 ?movie :movieTitle ?title .
                 """.format(w.token)
 
-                sparql = SPARQL_PREFIX.format(prefix=SPARQL_PREFIX,
+                sparql = SPARQL_SELECT.format(prefix=SPARQL_PREFIX,
                                               expression=expression,
                                               select=select)
                 break
@@ -324,7 +324,7 @@ rules = [
     Rule(entity_country + publish + Star(Any(), greedy=False) + movie + Star(Any(), greedy=False),
          QuestionSet.movie_published_in_country),
     # 某个演员出演了哪些类型的电影
-    Rule(entity_person + star + which + category + Star(Any(), greedy=False) + movie,
+    Rule(entity_person + Star(Any(), greedy=False) + which + category + Star(Any(), greedy=False) + movie,
          QuestionSet.what_genre_actor_star),
     # 某个演员出演的某个类型的电影有哪些
     Rule(entity_person + star + genre + Star(Any(), greedy=False) + movie + Star(Any(), greedy=False),
