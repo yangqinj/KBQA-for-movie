@@ -5,7 +5,7 @@
 """
 import re
 
-from refo import finditer, Predicate, Star, Any
+from refo import finditer, search, Predicate, Star, Any
 
 from app.decorators import print_func_name
 
@@ -54,6 +54,20 @@ class Rule(object):
         for m in finditer(self.condition, sentence):
             i, j = m.span()
             return self.action(sentence[i:j])
+
+
+class KeywordRule(object):
+    def __init__(self, condition=None, action=None):
+        """condition (class::`W`): the keyword"""
+        assert condition and action
+        self.condition = condition
+        self.action = action
+
+    def apply(self, sentence):
+        res = search(self.condition, sentence)
+        if res:
+            i, j = res.span()
+            return self.action(sentence[i])
 
 
 class QuestionSet(object):
@@ -105,14 +119,71 @@ class QuestionSet(object):
     @staticmethod
     @print_func_name
     def movie_with_rating(words):
-        """评分为X/以上/以上的电影有哪些？"""
-        pass
+        """评分为X/以上/以下的电影有哪些？"""
+        select = "?title"
+
+        operator = None
+        for r in compare_rules:
+            operator = r.apply(words)
+            if operator:
+                break
+
+        number = None
+        for w in words:
+            if w.pos == pos_number:
+                number = w.token
+                break
+
+        sparql = None
+        if operator and number:
+            expression = """
+                ?movie rdf:type :Movie .
+                ?movie :movieTitle ?title .
+                ?movie :rate ?rate .
+                filter(?rate {operator} {number})
+            """.format(operator=operator, number=number)
+            sparql = SPARQL_SELECT.format(prefix=SPARQL_PREFIX,
+                                          expression=expression,
+                                          select=select)
+
+        return sparql
 
     @staticmethod
     @print_func_name
-    def movie_with_rating_and_actor():
+    def movie_with_rating_and_actor(words):
         """某个演员参演的某个评分为X/以上/以下的电影"""
-        pass
+        select = "?title"
+
+        operator = None
+        for r in compare_rules:
+            operator = r.apply(words)
+            if operator:
+                break
+
+        number = None
+        actor = None
+        for w in words:
+            if w.pos == pos_number:
+                number = w.token
+
+            if w.pos == pos_person:
+                actor = w.token
+
+        sparql = None
+        if operator and number and actor:
+            expression = """
+                        ?movie rdf:type :Movie .
+                        ?movie :movieTitle ?title .
+                        ?movie :rate ?rate .
+                        ?movie :starring ?person .
+                        ?person :celebrityChineseName "{name}" .
+                        filter(?rate {operator} {number})
+                    """.format(operator=operator, number=number, name=actor)
+            sparql = SPARQL_SELECT.format(prefix=SPARQL_PREFIX,
+                                          expression=expression,
+                                          select=select)
+
+        return sparql
 
     @staticmethod
     @print_func_name
@@ -208,7 +279,29 @@ class QuestionSet(object):
     @print_func_name
     def movie_the_actor_star_with_genre(words):
         """某个演员出演的某个指定类型的电影有哪些"""
-        pass
+        genre_name = genre_rule.apply(words)
+
+        actor = None
+        for w in words:
+            if w.pos == pos_person:
+                actor = w.token
+                break
+
+        select = "?title"
+        sparql = None
+        if genre_name and actor:
+            expression = """
+                ?movie rdf:type :Movie .
+                ?movie :isGenre ?genre .
+                ?genre :genreName "{genre_name}" .
+                ?movie :starring ?person .
+                ?person :celebrityChineseName "{actor}" .
+            """.format(genre_name=genre_name, actor=actor)
+            sparql = SPARQL_SELECT.format(prefix=SPARQL_PREFIX,
+                                          expression=expression,
+                                          select=select)
+
+        return sparql
 
     @staticmethod
     @print_func_name
@@ -234,6 +327,27 @@ class QuestionSet(object):
         return sparql
 
 
+class KeywordSet(object):
+    @staticmethod
+    @print_func_name
+    def get_equal_operator(keyword):
+        return '='
+
+    @staticmethod
+    @print_func_name
+    def get_higher_operator(keyword):
+        return '>'
+
+    @staticmethod
+    @print_func_name
+    def get_lower_operator(keyword):
+        return '<'
+
+    @staticmethod
+    @print_func_name
+    def get_genre_name(keyword):
+        return keyword.token
+
 # 词性
 pos_person = "nr"
 pos_movie = "nz"
@@ -258,8 +372,8 @@ birth_date = (W("出生日期"))
 birth_place = (W("出生地"))
 
 equal = (W("等于") | W("为") | W("是"))
-higher = (W("大于") | W("高于"))
-lower = (W("小于") | W("低于"))
+higher = (W("大于") | W("高于") | W("以上"))
+lower = (W("小于") | W("低于") | W("以下"))
 compare = (equal | higher | lower)
 
 which = (W("哪些"))
@@ -334,11 +448,11 @@ rules = [
          QuestionSet.how_many_movie_actor_star)
 ]
 
-if __name__ == '__main__':
-    from app.word import Tokenizer
 
-    for r in rules:
-        result = r.apply(Tokenizer().tokenize("周星驰出演了什么电影？"))
-        if result:
-            print(result)
-            break
+compare_rules = [
+    KeywordRule(higher, KeywordSet.get_higher_operator),
+    KeywordRule(lower, KeywordSet.get_lower_operator),
+]
+
+genre_rule = KeywordRule(genre, KeywordSet.get_genre_name)
+
