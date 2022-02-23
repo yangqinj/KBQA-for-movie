@@ -20,8 +20,6 @@ class QABot(object):
             query_result = self.sparql_server.query(sparql)
             value = self.sparql_server.get_query_results_value(query_result)
 
-            print(value)
-
             if not value:
                 ans = "我不知道这个问题的答案"
             elif len(value) == 1:

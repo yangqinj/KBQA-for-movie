@@ -24,7 +24,6 @@ class SPARQLServer(object):
             for v in vars:
                 result.append(r[v]["value"])
             results.append(result)
-        print("results", results)
         return results
 
     @staticmethod
