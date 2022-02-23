@@ -20,14 +20,15 @@ class SPARQLServer(object):
         vars = query_results['head']['vars']
         results = []
         for r in query_results["results"]["bindings"]:
-            result = dict()
+            result = []
             for v in vars:
-                result[v] = r[v]["value"]
+                result.append(r[v]["value"])
             results.append(result)
+        print("results", results)
         return results
 
     @staticmethod
     def get_query_results_value(query_results):
         results = SPARQLServer.parse_query_results(query_results)
-        return [res.values() for res in results]
+        return results
 

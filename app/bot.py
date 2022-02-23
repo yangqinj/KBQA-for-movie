@@ -20,10 +20,12 @@ class QABot(object):
             query_result = self.sparql_server.query(sparql)
             value = self.sparql_server.get_query_results_value(query_result)
 
+            print(value)
+
             if not value:
                 ans = "我不知道这个问题的答案"
             elif len(value) == 1:
-                ans = value[0]
+                ans = " ".join(value[0])
             else:
 
                 ans = "、".join([" ".join(v) for v in value])
@@ -39,14 +41,17 @@ if __name__ == '__main__':
     bot = QABot(Config.fuseki_endpoint,
                 Config.dict_paths)
 
-    questions = ["周星驰出演了什么电影",
-                 "初恋这件小事有哪些演员出演了",
-                 "刘德华和梁朝伟一起出演的电影有哪些",
-                 "周星驰既出演又导演的影片有哪些",
-                 "法国上映的电影有哪些",
-                 "泰勒·吉蕾出演了什么类型的电影",
-                 "刘德华出演了多少部影片",
-                 "张曼玉出演的评分大于4分的电影"]
+    questions = [
+        "周星驰出演了什么电影",
+         "初恋这件小事有哪些演员出演了",
+         "刘德华和梁朝伟一起出演的电影有哪些",
+         "周星驰既出演又导演的影片有哪些",
+         "法国上映的电影有哪些",
+         "周星驰出演了什么类型的电影",
+         "刘德华出演了多少部影片",
+         "张曼玉出演的评分大于8分的电影",
+         "成龙出演的动作片有哪些"
+    ]
     for q in questions:
         print("*" * 20)
         print("问题：", q)

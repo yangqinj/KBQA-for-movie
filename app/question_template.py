@@ -45,21 +45,21 @@ class W(Predicate):
 
 
 class Rule(object):
-    def __init__(self, condition=None, action=None):
-        assert condition and action
+    def __init__(self, condition, condition_num, action):
         self.condition = condition
+        self.condition_num = condition_num
         self.action = action
 
     def apply(self, sentence):
         for m in finditer(self.condition, sentence):
             i, j = m.span()
-            return self.action(sentence[i:j])
+            return self.condition_num, self.action(sentence[i:j])
+        return None, None
 
 
 class KeywordRule(object):
-    def __init__(self, condition=None, action=None):
+    def __init__(self, condition, action):
         """condition (class::`W`): the keyword"""
-        assert condition and action
         self.condition = condition
         self.action = action
 
@@ -139,7 +139,7 @@ class QuestionSet(object):
             expression = """
                 ?movie rdf:type :Movie .
                 ?movie :movieTitle ?title .
-                ?movie :rate ?rate .
+                ?movie :movieRate ?rate .
                 filter(?rate {operator} {number})
             """.format(operator=operator, number=number)
             sparql = SPARQL_SELECT.format(prefix=SPARQL_PREFIX,
@@ -174,7 +174,7 @@ class QuestionSet(object):
             expression = """
                         ?movie rdf:type :Movie .
                         ?movie :movieTitle ?title .
-                        ?movie :rate ?rate .
+                        ?movie :movieRate ?rate .
                         ?movie :starring ?person .
                         ?person :celebrityChineseName "{name}" .
                         filter(?rate {operator} {number})
@@ -376,7 +376,7 @@ higher = (W("大于") | W("高于") | W("以上"))
 lower = (W("小于") | W("低于") | W("以下"))
 compare = (equal | higher | lower)
 
-which = (W("哪些"))
+which = (W("哪些") | W("什么"))
 how_many = (W("多少"))
 
 
@@ -418,33 +418,43 @@ genre = disaster | biography | song_and_dance | ancient | action | adventure | a
 rules = [
     # 某个演员出演了什么电影？
     Rule(entity_person + Star(Any(), greedy=False) + movie + Star(Any(), greedy=False),
+         2,
          QuestionSet.which_movie_does_actor_star),
     # 某个电影有哪些演员参演？
     Rule(entity_movie + Star(Any(), greedy=False) + actor + Star(Any(), greedy=False),
+         2,
          QuestionSet.which_actor_star_in_movie),
     # 评分为X/以上/以上/之间的电影有哪些？
-    Rule(rating + compare + entity_number + Star(Any(), greedy=False) + movie + Star(Any(), greedy=False),
+    Rule(rating + (compare + entity_number) | (entity_number + compare) + Star(Any(), greedy=False) + movie + Star(Any(), greedy=False),
+         4,
          QuestionSet.movie_with_rating),
     # 某个演员参演的某个评分为X/以上/以下/之间的电影
-    Rule(entity_person + rating + compare + entity_number + Star(Any(), greedy=False) + movie + Star(Any(), greedy=False),
+    Rule(entity_person + Star(Any(), greedy=False) + rating + (compare + entity_number) | (entity_number + compare) + Star(Any(), greedy=False) + movie + Star(Any(), greedy=False),
+         5,
          QuestionSet.movie_with_rating_and_actor),
     # 演员A和演员B共同出演的电影？
     Rule(entity_person + Star(Any(), greedy=False) + entity_person + Star(Any(), greedy=False) + movie + Star(Any(), greedy=False),
+         3,
          QuestionSet.movie_with_two_actors),
     # 某个演员即出演又是导演的电影？
     Rule(entity_person + Star(Any(), greedy=False) + star + Star(Any(), greedy=False) + direct + Star(Any(), greedy=False) + movie + Star(Any(), greedy=False),
+         4,
          QuestionSet.movie_with_celebrity_as_actor_and_director),
     # 某个国家上映的电影
     Rule(entity_country + publish + Star(Any(), greedy=False) + movie + Star(Any(), greedy=False),
+         3,
          QuestionSet.movie_published_in_country),
     # 某个演员出演了哪些类型的电影
     Rule(entity_person + Star(Any(), greedy=False) + which + category + Star(Any(), greedy=False) + movie,
+         4,
          QuestionSet.what_genre_actor_star),
     # 某个演员出演的某个类型的电影有哪些
-    Rule(entity_person + star + genre + Star(Any(), greedy=False) + movie + Star(Any(), greedy=False),
+    Rule(entity_person + Star(Any(), greedy=False) + genre + Star(Any(), greedy=False) + movie + Star(Any(), greedy=False),
+         3,
          QuestionSet.movie_the_actor_star_with_genre),
     # 某个演员出演了多少部电影
     Rule(entity_person + star + Star(Any(), greedy=False) + how_many + Star(Any(), greedy=False) + movie + Star(Any(), greedy=False),
+         3,
          QuestionSet.how_many_movie_actor_star)
 ]
 
