@@ -150,8 +150,8 @@ class QuestionSet(object):
 
     @staticmethod
     @print_func_name
-    def movie_with_rating_and_actor(words):
-        """某个演员参演的某个评分为X/以上/以下的电影"""
+    def movie_with_rating_and_director(words):
+        """某个人导演的评分为X/以上/以下的电影"""
         select = "?title"
 
         operator = None
@@ -175,7 +175,7 @@ class QuestionSet(object):
                         ?movie rdf:type :Movie .
                         ?movie :movieTitle ?title .
                         ?movie :movieRate ?rate .
-                        ?movie :starring ?person .
+                        ?movie :directedBy ?person .
                         ?person :celebrityChineseName "{name}" .
                         filter(?rate {operator} {number})
                     """.format(operator=operator, number=number, name=actor)
@@ -436,24 +436,24 @@ genre = disaster | biography | song_and_dance | ancient | action | adventure | a
 # 问题模板
 rules = [
     # 某个演员出演了什么电影？
-    Rule(entity_person + Star(Any(), greedy=False) + movie + Star(Any(), greedy=False),
-         2,
+    Rule(entity_person + star + Star(Any(), greedy=False) + movie + Star(Any(), greedy=False),
+         3,
          QuestionSet.which_movie_does_actor_star),
     # 某个电影有哪些演员参演？
-    Rule(entity_movie + Star(Any(), greedy=False) + actor + Star(Any(), greedy=False),
-         2,
+    Rule(entity_movie + Star(Any(), greedy=False) + actor + star + Star(Any(), greedy=False),
+         3,
          QuestionSet.which_actor_star_in_movie),
     # 评分为X/以上/以上/之间的电影有哪些？
     Rule(rating + (compare + entity_number) | (entity_number + compare) + Star(Any(), greedy=False) + movie + Star(Any(), greedy=False),
          4,
          QuestionSet.movie_with_rating),
-    # 某个演员参演的某个评分为X/以上/以下/之间的电影
-    Rule(entity_person + Star(Any(), greedy=False) + rating + (compare + entity_number) | (entity_number + compare) + Star(Any(), greedy=False) + movie + Star(Any(), greedy=False),
-         5,
-         QuestionSet.movie_with_rating_and_actor),
+    # 某个人导演的评分为X/以上/以下/之间的电影
+    Rule(entity_person + direct + Star(Any(), greedy=False) + rating + (compare + entity_number) | (entity_number + compare) + Star(Any(), greedy=False) + movie + Star(Any(), greedy=False),
+         6,
+         QuestionSet.movie_with_rating_and_director),
     # 演员A和演员B共同出演的电影？
-    Rule(entity_person + Star(Any(), greedy=False) + entity_person + Star(Any(), greedy=False) + movie + Star(Any(), greedy=False),
-         3,
+    Rule(entity_person + Star(Any(), greedy=False) + entity_person + Star(Any(), greedy=False) + star + Star(Any(), greedy=False) + movie + Star(Any(), greedy=False),
+         4,
          QuestionSet.movie_with_two_actors),
     # 某个演员即出演又是导演的电影？
     Rule(entity_person + Star(Any(), greedy=False) + star + Star(Any(), greedy=False) + direct + Star(Any(), greedy=False) + movie + Star(Any(), greedy=False),
@@ -464,8 +464,8 @@ rules = [
          3,
          QuestionSet.movie_published_in_country),
     # 某个演员出演了哪些类型的电影
-    Rule(entity_person + Star(Any(), greedy=False) + which + category + Star(Any(), greedy=False) + movie,
-         4,
+    Rule(entity_person + star + Star(Any(), greedy=False) + which + category + Star(Any(), greedy=False) + movie,
+         5,
          QuestionSet.what_genre_actor_star),
     # 某个演员出演的某个类型的电影有哪些
     Rule(entity_person + Star(Any(), greedy=False) + genre + Star(Any(), greedy=False) + movie + Star(Any(), greedy=False),
