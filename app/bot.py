@@ -14,6 +14,7 @@ class QABot(object):
 
     def answer(self, question):
         sparql = self.q2s.translate(question)
+        print("sparql", sparql)
 
         ans = None
         if sparql:
@@ -44,7 +45,7 @@ if __name__ == '__main__':
          "初恋这件小事有哪些演员出演了",
          "刘德华和梁朝伟一起出演的电影有哪些",
          "周星驰既出演又导演的影片有哪些",
-         "法国上映的电影有哪些",
+         "中国上映的电影有哪些",
          "周星驰出演了什么类型的电影",
          "刘德华出演了多少部影片",
          "张曼玉出演的评分大于8分的电影",

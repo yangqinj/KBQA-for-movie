@@ -236,14 +236,33 @@ class QuestionSet(object):
         """某个国家上映的电影"""
         select = "?title"
 
+        special_countries = {
+            "中国": ("中国大陆", "中国香港", "中国台湾"),
+            "大陆": "中国大陆",
+            "香港": "中国香港",
+            "台湾": "中国台湾"
+        }
+
         sparql = None
         for w in words:
             if w.pos == pos_country:
-                expression = """
-                ?movie rdf:type :Movie .
-                ?movie :movieCountry "{}" .
-                ?movie :movieTitle ?title .
-                """.format(w.token)
+                canonical_country = special_countries.get(w.token)
+                if not canonical_country:
+                    canonical_country = w.token
+
+                if isinstance(canonical_country, (list, set, tuple)):
+                    expression = """
+                    ?movie rdf:type :Movie .
+                    ?movie :movieCountry ?country .
+                    ?movie :movieTitle ?title .
+                    FILTER(?country IN ({})).
+                    """.format(", ".join(['"{}"'.format(c) for c in canonical_country]))
+                else:
+                    expression = """
+                    ?movie rdf:type :Movie .
+                    ?movie :movieCountry "{}" .
+                    ?movie :movieTitle ?title .
+                    """.format(canonical_country)
 
                 sparql = SPARQL_SELECT.format(prefix=SPARQL_PREFIX,
                                               expression=expression,

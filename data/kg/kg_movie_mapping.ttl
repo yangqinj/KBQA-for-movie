@@ -64,6 +64,20 @@ map:genre_genre_name a d2rq:PropertyBridge;
 	d2rq:column "genre.genre_name";
 	.
 
+# Table country
+map:country a d2rq:ClassMap;
+	d2rq:dataStorage map:database;
+	d2rq:uriPattern "country/@@country.country_id@@";
+	d2rq:class :Country;
+	d2rq:classDefinitionLabel "country";
+	.
+map:country_country_name a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:country;
+	d2rq:property :countryName;
+	d2rq:propertyDefinitionLabel "country country_name";
+	d2rq:column "country.country_name";
+	.
+
 # Table movie
 map:movie a d2rq:ClassMap;
 	d2rq:dataStorage map:database;
@@ -83,12 +97,6 @@ map:movie_publish_year a d2rq:PropertyBridge;
 	d2rq:propertyDefinitionLabel "movie publish_year";
 	d2rq:column "movie.publish_year";
 	d2rq:datatype xsd:date;
-	.
-map:movie_country a d2rq:PropertyBridge;
-	d2rq:belongsToClassMap map:movie;
-	d2rq:property :movieCountry;
-	d2rq:propertyDefinitionLabel "movie country";
-	d2rq:column "movie.country";
 	.
 map:movie_rate a d2rq:PropertyBridge;
 	d2rq:belongsToClassMap map:movie;
@@ -125,3 +133,11 @@ map:movie_to_genre__link a d2rq:PropertyBridge;
 	d2rq:join "movie_to_genre.movie_id => movie.movie_id";
 	.
 
+# Table movie_to_country (n:m)
+map:movie_to_country__link a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:movie;
+	d2rq:property :producedIn;
+	d2rq:refersToClassMap map:country;
+	d2rq:join "movie_to_country.country_id => country.country_id";
+	d2rq:join "movie_to_country.movie_id => movie.movie_id";
+	.
