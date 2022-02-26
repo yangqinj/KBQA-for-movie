@@ -50,24 +50,37 @@
      ja:defaultGraph :inferenceModel
      .
 
+#### 使用规则推理：成功启动并查询到数据
 :inferenceModel rdf:type ja:InfModel;
 
      # 基础模型
-     # ja:baseModel :tdbGraph;
-     ja:MemoryModel :tdbGraph;
-
-     # 本体文件路径
-     ja:content [
-      ja:externalContent <file:///Users/yangqj/Documents/Workspace/KBQA-for-movie/jena/apache-jena-fuseki-3.16.0/run_tdb_inf/databases/kg_movie_ontology.ttl> ;
-     ];
+     ja:baseModel :tdbGraph;
 
      # 规则推理机和规则文件路径
      ja:reasoner [
-      ja:reasonerURL <http://jena.hpl.hp.com/2003/GenericRuleReasoner> ;
-      ja:rulesFrom <file:///Users/yangqj/Documents/Workspace/KBQA-for-movie/jena/apache-jena-fuseki-3.16.0/run_tdb_inf/databases/kg_movie_rules.ttl> ;
+       ja:reasonerURL <http://jena.hpl.hp.com/2003/GenericRuleReasoner> ;
+       ja:rulesFrom <file:///Users/yangqj/Documents/Workspace/KBQA-for-movie/jena/apache-jena-fuseki-3.16.0/run_tdb_inf/databases/kg_movie_rules.ttl> ;
      ];
 
      .
+
+
+#### 使用OWL本体推理：成功启动，但是查询结果为空
+#:inferenceModel rdf:type ja:InfModel;
+#
+#     # 基础模型
+#     ja:MemoryModel :tdbGraph;
+#
+#     # 本体文件路径
+#     ja:content [
+#       ja:externalContent <file:///Users/yangqj/Documents/Workspace/KBQA-for-movie/jena/apache-jena-fuseki-3.16.0/run_tdb_inf/databases/kg_movie_owl.ttl> ;
+#     ];
+#
+#     # OWL本体推理
+#     ja:reasoner [
+#      ja:reasonerURL <http://jena.hpl.hp.com/2003/OWLFBRuleReasoner> ;
+#     ];
+#     .
 
 :tdbGraph rdf:type tdb:GraphTDB;
      tdb:location "/Users/yangqj/Documents/Workspace/KBQA-for-movie/data/tdb" ;

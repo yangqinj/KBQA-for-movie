@@ -31,6 +31,19 @@
          rdfs:range :Genre .
 
 
+###  http://www.kgmovie.com#produce
+:produce rdf:type owl:ObjectProperty ;
+         owl:inverseOf :producedIn ;
+         rdfs:domain :Country ;
+         rdfs:range :Movie .
+
+
+###  http://www.kgmovie.com#producedIn
+:producedIn rdf:type owl:ObjectProperty ;
+            rdfs:domain :Movie ;
+            rdfs:range :Country .
+
+
 ###  http://www.kgmovie.com#star
 :star rdf:type owl:ObjectProperty ;
       owl:inverseOf :starring ;
@@ -54,6 +67,12 @@
                     rdfs:range xsd:string .
 
 
+###  http://www.kgmovie.com#celebrityBirthPlace
+:celebrityBirthPlace rdf:type owl:DatatypeProperty ;
+                     rdfs:domain :Celebrity ;
+                     rdfs:range xsd:string .
+
+
 ###  http://www.kgmovie.com#celebrityChineseName
 :celebrityChineseName rdf:type owl:DatatypeProperty ;
                       rdfs:domain :Celebrity ;
@@ -66,22 +85,16 @@
                  rdfs:range xsd:string .
 
 
-###  http://www.kgmovie.com#celebrityPlace
-:celebrityBirthPlace rdf:type owl:DatatypeProperty ;
-                     rdfs:domain :Celebrity ;
-                     rdfs:range xsd:string .
+###  http://www.kgmovie.com#countryName
+:countryName rdf:type owl:DatatypeProperty ;
+             rdfs:domain :Country ;
+             rdfs:range xsd:string .
 
 
 ###  http://www.kgmovie.com#genreName
 :genreName rdf:type owl:DatatypeProperty ;
            rdfs:domain :Genre ;
            rdfs:range xsd:string .
-
-
-###  http://www.kgmovie.com#moiveCountry
-:movieCountry rdf:type owl:DatatypeProperty ;
-              rdfs:domain :Movie ;
-              rdfs:range xsd:string .
 
 
 ###  http://www.kgmovie.com#moviePublishYear
@@ -108,6 +121,10 @@
 
 ###  http://www.kgmovie.com#Celebrity
 :Celebrity rdf:type owl:Class .
+
+
+###  http://www.kgmovie.com#Country
+:Country rdf:type owl:Class .
 
 
 ###  http://www.kgmovie.com#Genre

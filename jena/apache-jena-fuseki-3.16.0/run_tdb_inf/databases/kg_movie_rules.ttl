@@ -5,5 +5,5 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 
-[ruleInverse: (?m :directedBy ?c) -> (?c :direct ?m)]
+[ruleInverse: (?m :starring ?c) -> (?c :star ?m)]
 [ruleComedian: (?m :starring ?c) (?m :isGenre ?g) (?g :genreName "喜剧") -> (?c rdf:type :Comedian)]
