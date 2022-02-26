@@ -8,7 +8,7 @@
 + jena使用的是3.16.0版本。
 + d2rq使用的是0.8.1版本
 
-jena实现了无推理版本和规则推理版本，分别对应配置目录`jena/apache-jena-fuseki-3.16.0/run_tdb`和`jena/apache-jena-fuseki-3.16.0/run_tdb_inf`，可以通过配置`FUSEKI_BASE`环境变量设置使用哪一个配置文件。
+jena实现了无推理版本和规则推理版本，分别对应配置目录`jena/apache-jena-fuseki-3.16.0/run_tdb`和`jena/apache-jena-fuseki-3.16.0/run_tdb_inf`，可以通过启动脚本start.sh中`FUSEKI_BASE`环境变量设置使用哪一个配置文件。
 
    
 
