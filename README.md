@@ -23,7 +23,7 @@
 
 数据从豆瓣电影到Jena Fuseki的完成流程如下图所示，爬虫从豆瓣电影爬取Top250电影信息，经过解析后存储到数据库中。再通过d2rq的dump-rdf工具和mapping文件转换为RDF三元组格式文件，再由Jena的tdbloader工具转换为fuseki使用的TDB格式。启动jena fuseki后即可向KBQA服务提供SPARQL查询功能。其实d2rq也提供SPARQL查询功能，但是它并没有转换数据库的数据为RDF，而是将SPARQL转换为sql语句直接在数据库中查询。因此，当数据量大或者访问频繁的时候开销很大，查询速度会比较慢。
 
-![image-20220301171316797](/Users/yangqj/Documents/Workspace/KBQA-for-movie/data/img/image-20220301171316797.png)
+![image-20220301171316797](./data/img/image-20220301171316797.png)
 
 
 
